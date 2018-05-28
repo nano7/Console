@@ -1,0 +1,39 @@
+{
+    "name"       : "nano7/console",
+    "description": "The Nano7 Console package.",
+    "license"    : "GPL-3.0-only",
+
+    "authors"    : [
+        {
+            "name" : "Bruno Goncalves",
+            "email": "bugotech@gmail.com"
+        }
+    ],
+
+    "require": {
+        "php"                   : ">=5.5.0",
+        "nano7/foundation"      : "dev-master",
+        "symfony/console"       : "^3.4"
+    },
+
+    "autoload": {
+        "files": [
+            "helpers.php"
+        ],
+
+        "psr-4": {
+            "Nano7\\Console\\": ""
+        }
+    },
+
+    "extra": {
+        "nano7": {
+            "providers": [
+                "Nano7\\Console\\ConsoleServiceProviders"
+            ]
+        }
+    },
+
+    "minimum-stability": "dev",
+    "prefer-stable"    : true
+}
