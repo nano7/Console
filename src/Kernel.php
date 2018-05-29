@@ -64,4 +64,20 @@ class Kernel
 
         return $this->console->add($command);
     }
+
+    /**
+     * @param $name
+     */
+    public function setName($name)
+    {
+        $this->console->setName($name);
+    }
+
+    /**
+     * @param $version
+     */
+    public function setVersion($version)
+    {
+        $this->console->setVersion($version);
+    }
 }

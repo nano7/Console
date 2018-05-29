@@ -18,11 +18,11 @@
 
     "autoload": {
         "files": [
-            "helpers.php"
+            "src/helpers.php"
         ],
 
         "psr-4": {
-            "Nano7\\Console\\": ""
+            "Nano7\\Console\\": "src/"
         }
     },
 
