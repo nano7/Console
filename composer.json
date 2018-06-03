@@ -26,14 +26,6 @@
         }
     },
 
-    "extra": {
-        "nano7": {
-            "providers": [
-                "Nano7\\Console\\ConsoleServiceProviders"
-            ]
-        }
-    },
-
     "minimum-stability": "dev",
     "prefer-stable"    : true
 }
