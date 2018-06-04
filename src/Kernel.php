@@ -62,6 +62,8 @@ class Kernel
             $command = $this->app->make($command);
         }
 
+        $command->setConsole($this);
+
         return $this->console->add($command);
     }
 
