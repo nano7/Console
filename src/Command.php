@@ -132,14 +132,12 @@ abstract class Command extends SymfonyCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->handle();
-    }
+        if (method_exists($this, 'handle')) {
+            return $this->console->app->call([$this, 'handle']);
+        }
 
-    /**
-     * Execute the console command.
-     * @return mixed
-     */
-    abstract protected function handle();
+        return null;
+    }
 
     /**
      * Call another console command.

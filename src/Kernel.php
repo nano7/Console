@@ -10,7 +10,7 @@ class Kernel
     /**
      * @var Application
      */
-    protected $app;
+    public $app;
 
     /**
      * @var ConsoleApp
