@@ -132,6 +132,6 @@ trait DaemonControl
      */
     private function getPathControlFlow()
     {
-        return realpath(__DIR__ . '/../flows/') . str_replace(['/','\\','_'], '', strtolower(get_called_class()));
+        return realpath(__DIR__ . '/../flows') . '/' . str_replace(['/','\\','_'], '', strtolower(get_called_class()));
     }
 }
