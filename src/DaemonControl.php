@@ -109,6 +109,26 @@ trait DaemonControl
     }
 
     /**
+     * Pause daemon.
+     */
+    protected function pause()
+    {
+        $file = $this->flowFile->combine($this->getPathControlFlow(), 'pause.flow');
+
+        $this->flowFile->put($file, '.');
+    }
+
+    /**
+     * Remove pause.
+     */
+    protected function start()
+    {
+        $file = $this->flowFile->combine($this->getPathControlFlow(), 'pause.flow');
+
+        $this->flowFile->delete($file);
+    }
+
+    /**
      * @return bool
      */
     private function inShouldQuit()
@@ -116,6 +136,16 @@ trait DaemonControl
         $file = $this->flowFile->combine($this->getPathControlFlow(), 'daemon.flow');
 
         return ! $this->flowFile->exists($file);
+    }
+
+    /**
+     * Quit deamon.
+     */
+    protected function quit()
+    {
+        $file = $this->flowFile->combine($this->getPathControlFlow(), 'daemon.flow');
+
+        $this->flowFile->delete($file);
     }
 
     /**
