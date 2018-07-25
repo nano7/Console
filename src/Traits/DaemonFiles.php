@@ -29,6 +29,10 @@ trait DaemonFiles
         }
 
         $this->files = new Filesystem();
+
+        $path = $this->getPathDaemonFlow();
+        $this->files->force($path);
+
         $this->preparedFiles = true;
     }
 
@@ -39,10 +43,7 @@ trait DaemonFiles
     {
         $this->prepareFiles();
 
-        $path = $this->getPathDaemonFlow();
-
-        $this->files->force($path);
-        $this->files->deleteFiles($path, '*.flow');
+        $this->files->deleteFiles($this->getPathDaemonFlow(), '*.flow');
 
         $this->setFlag('daemon');
     }
