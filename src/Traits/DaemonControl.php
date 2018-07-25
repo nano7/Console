@@ -1,18 +1,8 @@
-<?php namespace Nano7\Console;
-
-use Nano7\Foundation\Support\Filesystem;
+<?php namespace Nano7\Console\Traits;
 
 trait DaemonControl
 {
-    /**
-     * @var string
-     */
-    public $flowControlName = '';
-
-    /**
-     * @var Filesystem
-     */
-    private $flowFile;
+    use DaemonFiles;
 
     /**
      * @param $callback
@@ -21,9 +11,7 @@ trait DaemonControl
      */
     protected function runDaemon($callback, $sleep = 3, $memoryLimit = 128)
     {
-        $this->flowFile = new Filesystem();
-
-        $this->resetSignals();
+        $this->resetFlags();
 
         while (true) {
             if ($this->inPaused()) {
@@ -103,9 +91,7 @@ trait DaemonControl
      */
     private function inPaused()
     {
-        $file = $this->flowFile->combine($this->getPathControlFlow(), 'pause.flow');
-
-        return $this->flowFile->exists($file);
+        return $this->hasFlag('pause');
     }
 
     /**
@@ -113,9 +99,7 @@ trait DaemonControl
      */
     protected function pause()
     {
-        $file = $this->flowFile->combine($this->getPathControlFlow(), 'pause.flow');
-
-        $this->flowFile->put($file, '.');
+        $this->setFlag('pause', true);
     }
 
     /**
@@ -123,9 +107,7 @@ trait DaemonControl
      */
     protected function start()
     {
-        $file = $this->flowFile->combine($this->getPathControlFlow(), 'pause.flow');
-
-        $this->flowFile->delete($file);
+        $this->setFlag('pause', false);
     }
 
     /**
@@ -133,9 +115,7 @@ trait DaemonControl
      */
     private function inShouldQuit()
     {
-        $file = $this->flowFile->combine($this->getPathControlFlow(), 'daemon.flow');
-
-        return ! $this->flowFile->exists($file);
+        return ! $this->hasFlag('daemon');
     }
 
     /**
@@ -143,30 +123,6 @@ trait DaemonControl
      */
     protected function quit()
     {
-        $file = $this->flowFile->combine($this->getPathControlFlow(), 'daemon.flow');
-
-        $this->flowFile->delete($file);
-    }
-
-    /**
-     * Reset controls de fluxo.
-     */
-    private function resetSignals()
-    {
-        $path = $this->getPathControlFlow();
-        $this->flowFile->force($path);
-
-        $this->flowFile->deleteFiles($path, '*.flow');
-
-        $file = $this->flowFile->combine($this->getPathControlFlow(), 'daemon.flow');
-        $this->flowFile->put($file, '.');
-    }
-
-    /**
-     * @return string
-     */
-    private function getPathControlFlow()
-    {
-        return realpath(__DIR__ . '/../flows') . '/' . $this->flowControlName;
+        $this->setFlag('daemon', false);
     }
 }
