@@ -52,7 +52,7 @@ trait DaemonFiles
      */
     private function getPathDaemonFlow()
     {
-        return realpath(__DIR__ . '/../flows') . '/' . $this->flowControlName;
+        return realpath(__DIR__ . '/../../flows') . '/' . $this->flowControlName;
     }
 
     /**
