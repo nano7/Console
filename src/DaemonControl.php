@@ -5,6 +5,11 @@ use Nano7\Foundation\Support\Filesystem;
 trait DaemonControl
 {
     /**
+     * @var string
+     */
+    public $flowControlName = '';
+
+    /**
      * @var Filesystem
      */
     private $flowFile;
@@ -132,6 +137,6 @@ trait DaemonControl
      */
     private function getPathControlFlow()
     {
-        return realpath(__DIR__ . '/../flows') . '/' . str_replace(['/','\\','_'], '', strtolower(get_called_class()));
+        return realpath(__DIR__ . '/../flows') . '/' . $this->flowControlName;
     }
 }
