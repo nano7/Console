@@ -1,20 +1,13 @@
 <?php namespace Nano7\Console;
 
+use Nano7\Foundation\Support\Filesystem;
+
 trait DaemonControl
 {
     /**
-     * Indicates if the worker should exit.
-     *
-     * @var bool
+     * @var Filesystem
      */
-    public $shouldQuit = false;
-
-    /**
-     * Indicates if the worker is paused.
-     *
-     * @var bool
-     */
-    public $paused = false;
+    private $flowFile;
 
     /**
      * @param $callback
@@ -23,12 +16,12 @@ trait DaemonControl
      */
     protected function runDaemon($callback, $sleep = 3, $memoryLimit = 128)
     {
-        if ($this->supportsAsyncSignals()) {
-            $this->listenForSignals();
-        }
+        $this->flowFile = new Filesystem();
+
+        $this->resetSignals();
 
         while (true) {
-            if ($this->paused) {
+            if ($this->inPaused()) {
                 $this->sleep($sleep);
                 $this->stopIfNecessary($memoryLimit);
 
@@ -80,45 +73,13 @@ trait DaemonControl
      */
     protected function stopIfNecessary($memory)
     {
-        if ($this->shouldQuit) {
+        if ($this->inShouldQuit()) {
             $this->kill();
         }
 
         if ($this->memoryExceeded($memory)) {
-            $this->stop(12);
+            $this->kill(12);
         }
-    }
-
-    /**
-     * Determine if "async" signals are supported.
-     *
-     * @return bool
-     */
-    private function supportsAsyncSignals()
-    {
-        return extension_loaded('pcntl');
-    }
-
-    /**
-     * Enable async signals for the process.
-     *
-     * @return void
-     */
-    private function listenForSignals()
-    {
-        pcntl_async_signals(true);
-
-        pcntl_signal(SIGTERM, function () {
-            $this->shouldQuit = true;
-        });
-
-        pcntl_signal(SIGUSR2, function () {
-            $this->paused = true;
-        });
-
-        pcntl_signal(SIGCONT, function () {
-            $this->paused = false;
-        });
     }
 
     /**
@@ -129,21 +90,48 @@ trait DaemonControl
      */
     public function kill($status = 0)
     {
-        if (extension_loaded('posix')) {
-            posix_kill(getmypid(), SIGKILL);
-        }
-
         exit($status);
     }
 
     /**
-     * Stop listening and bail out of the script.
-     *
-     * @param  int  $status
-     * @return void
+     * @return bool
      */
-    public function stop($status = 0)
+    private function inPaused()
     {
-        exit($status);
+        $file = $this->flowFile->combine($this->getPathControlFlow(), 'pause.flow');
+
+        return $this->flowFile->exists($file);
+    }
+
+    /**
+     * @return bool
+     */
+    private function inShouldQuit()
+    {
+        $file = $this->flowFile->combine($this->getPathControlFlow(), 'daemon.flow');
+
+        return ! $this->flowFile->exists($file);
+    }
+
+    /**
+     * Reset controls de fluxo.
+     */
+    private function resetSignals()
+    {
+        $path = $this->getPathControlFlow();
+        $this->flowFile->force($path);
+
+        $this->flowFile->deleteFiles($path, '*.flow');
+
+        $file = $this->flowFile->combine($this->getPathControlFlow(), 'daemon.flow');
+        $this->flowFile->put($file, '.');
+    }
+
+    /**
+     * @return string
+     */
+    private function getPathControlFlow()
+    {
+        return realpath(__DIR__ . '/../flows/') . str_replace(['/','\\','_'], '', strtolower(get_called_class()));
     }
 }
