@@ -1,7 +1,7 @@
 <?php namespace Nano7\Console;
 
+use Nano7\Support\Str;
 use InvalidArgumentException;
-use Nano7\Foundation\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 

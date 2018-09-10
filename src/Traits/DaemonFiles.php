@@ -1,6 +1,6 @@
 <?php namespace Nano7\Console\Traits;
 
-use Nano7\Foundation\Support\Filesystem;
+use Nano7\Support\Filesystem;
 
 trait DaemonFiles
 {
